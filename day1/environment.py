@@ -110,4 +110,15 @@ class Environment():
         elif action == Action.RIGHT:
             next_state += 1
 
-        
+        # 状態が枠の外に出ていないかのチェック
+        if not (0 <= next_state.row < self.row_length):
+            next_state = state
+        if not (0 <= next_state.column < self.column_length):
+            next_state = state
+
+        # エージェントが黒いセルに行かないかチェック
+        if self.grid[next_state.row][next_state.column] == 9:
+            next_state = state
+
+        return next_state
+    

@@ -87,4 +87,27 @@ class Environment():
                 transition_probs[next_state] += prob
 
         return transition_probs
-    
+
+    def can_action_at(self, state):
+        if self.grid[state.row][state.column] == 0:
+            return True
+        else:
+            return False
+
+    def _move(self, state, action):
+        if not self.can_action_at(state):
+            raise Exception("Can't move from here!")
+
+        next_state = state.clone()
+
+        # アクションの実行
+        if action == Action.UP:
+            next_state.row -= 1
+        elif action == Action.DOWN:
+            next_state.row += 1
+        elif action == Action.LEFT:
+            next_state -= 1
+        elif action == Action.RIGHT:
+            next_state += 1
+
+        

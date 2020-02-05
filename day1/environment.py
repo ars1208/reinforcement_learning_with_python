@@ -1,3 +1,4 @@
+from enum import Enum
 import numpy as np
 
 # State: セルの位置を表すクラス
@@ -109,9 +110,9 @@ class Environment():
         elif action == Action.DOWN:
             next_state.row += 1
         elif action == Action.LEFT:
-            next_state -= 1
+            next_state.column -= 1
         elif action == Action.RIGHT:
-            next_state += 1
+            next_state.column += 1
 
         # 状態が枠の外に出ていないかのチェック
         if not (0 <= next_state.row < self.row_length):

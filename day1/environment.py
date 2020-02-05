@@ -1,3 +1,5 @@
+import numpy as np
+
 # State: セルの位置を表すクラス
 class State():
 
@@ -94,6 +96,7 @@ class Environment():
         else:
             return False
 
+    # 移動の処理を行なう関数
     def _move(self, state, action):
         if not self.can_action_at(state):
             raise Exception("Can't move from here!")
@@ -121,4 +124,48 @@ class Environment():
             next_state = state
 
         return next_state
-    
+
+    def reward_func(self, state):
+        reward = self.default_reward
+        done = False
+
+        # next_stateの状態をチェックする
+        attribute = self.grid[state.row][state.column]
+        if attribute == 1:
+            # 報酬を得て、ゲーム終了
+            reward = 1
+            done = True
+        elif attribute == -1:
+            # 失敗でゲーム終了
+            reward = -1
+            done = True
+
+        return reward, done
+
+    # エージェントの位置を初期化（左下の位置）する関数
+    def reset(self):
+        self.agent_state = State(self.row_length - 1, 0)
+        return self.agent_state
+
+    # 行動を受け取って、遷移関数と報酬関数を用いて、次の遷移先と即時報酬を返す
+    def step(self, action):
+        next_state, reward, done = self.transit(self.agent_state, action)
+        if next_state is not None:
+            self.agent_state = next_state
+
+        return next_state, reward, done
+
+    def transit(self, state, action):
+        transition_probs = self.transit_func(state, action)
+        if len(transition_probs) == 0:
+            return None, None, True
+
+        next_state = list()
+        probs = list()
+        for s in transition_probs:
+            next_state.append(s)
+            probs.append(transition_probs[s])
+
+        next_state = np.random.choice(next_state, p=probs)
+        reward, done = self.reward_func(next_state)
+        return next_state, reward, done
